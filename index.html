@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRAM-BUS-TO — Scheda di Sorveglianza</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="TRAM-BUS-TO">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&display=swap');
+
+  :root {
+    --arancio: #FF6B2B;
+    --nero: #111111;
+    --bianco: #F8F8F8;
+    --grigio: #CCCCCC;
+    --grigio-scuro: #888888;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bianco);
+    color: var(--nero);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .header {
+    background: var(--nero);
+    color: var(--bianco);
+    text-align: center;
+    padding: 24px 20px 16px;
+    border-bottom: 4px solid var(--arancio);
+  }
+
+  .tram-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .titolo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 52px;
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--bianco);
+  }
+
+  .titolo span { color: var(--arancio); }
+
+  .agenzia {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--grigio);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .briefing {
+    background: var(--arancio);
+    color: var(--nero);
+    padding: 12px 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .scheda {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  .numero-scheda {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--grigio-scuro);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .numero-scheda input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--grigio);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    width: 60px;
+    color: var(--nero);
+    padding: 2px 4px;
+  }
+
+  .campo {
+    border: 1px solid var(--nero);
+    margin-bottom: 14px;
+    position: relative;
+  }
+
+  .campo-header {
+    background: var(--nero);
+    color: var(--bianco);
+    padding: 6px 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .campo-header .num { color: var(--arancio); font-size: 11px; }
+
+  .campo-body { padding: 12px; }
+
+  .opzioni { display: flex; flex-direction: column; gap: 8px; }
+
+  .opzione {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .opzione:hover { border-color: var(--grigio); }
+
+  .opzione.selezionata {
+    border-color: var(--arancio);
+    background: #fff5f0;
+  }
+
+  .opzione input[type="radio"],
+  .opzione input[type="checkbox"] { display: none; }
+
+  .checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--nero);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: background 0.15s;
+  }
+
+  .opzione.selezionata .checkbox-custom {
+    background: var(--arancio);
+    border-color: var(--arancio);
+    color: white;
+  }
+
+  .opzione-testo { font-size: 11px; line-height: 1.5; flex: 1; }
+  .opzione-testo em { color: var(--grigio-scuro); font-style: italic; }
+
+  .riga-input { margin-bottom: 10px; }
+
+  .riga-label {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--grigio-scuro);
+    margin-bottom: 4px;
+  }
+
+  .riga-input input[type="text"] {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--nero);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--nero);
+    padding: 4px 2px;
+    outline: none;
+  }
+
+  .fila { display: flex; gap: 12px; }
+  .fila .riga-input { flex: 1; }
+
+  .stelle { display: flex; gap: 6px; align-items: center; }
+
+  .stella {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--grigio);
+    transition: color 0.1s;
+    user-select: none;
+  }
+
+  .stella.attiva { color: var(--arancio); }
+
+  .livello-label {
+    font-size: 10px;
+    color: var(--grigio-scuro);
+    margin-left: 8px;
+    font-style: italic;
+  }
+
+  .sep { height: 2px; background: var(--arancio); margin: 20px 0; }
+
+  .footer-scheda {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--grigio-scuro);
+    text-align: center;
+    text-transform: uppercase;
+    padding: 12px 0;
+    border-top: 1px solid var(--grigio);
+  }
+
+  .azioni {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--nero);
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    border-top: 3px solid var(--arancio);
+    z-index: 100;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn:active { opacity: 0.7; }
+  .btn-reset { background: none; border: 1px solid var(--grigio-scuro); color: var(--grigio); }
+  .btn-pdf { background: var(--arancio); color: var(--nero); }
+
+  @media print {
+    body { background: white; }
+    .azioni { display: none; }
+    .header { background: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .campo-header { background: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .briefing { background: var(--arancio) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .scheda { padding-bottom: 20px; }
+    .opzione.selezionata { background: #fff5f0 !important; border-color: var(--arancio) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .opzione.selezionata .checkbox-custom { background: var(--arancio) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .stella.attiva { color: var(--arancio) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--nero);
+    color: var(--bianco);
+    padding: 10px 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-left: 3px solid var(--arancio);
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  .toast.visibile { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="tram-icon">🚋</span>
+  <div class="titolo">TRAM<span>-</span>BUS<span>-</span>TO</div>
+  <div class="agenzia">Agenzia Intergalattica di Monitoraggio Pendolari — Settore Terra/Italia</div>
+</div>
+
+<div class="briefing">
+  AGENTE, HAI 10 MINUTI. IDENTIFICA UN SOGGETTO. COMPILA IL RAPPORTO. NON FARTI NOTARE.
+</div>
+
+<div class="scheda">
+
+  <div class="numero-scheda">
+    SCHEDA DI SORVEGLIANZA N.&nbsp;<input type="text" id="num-scheda" maxlength="6" placeholder="____">
+  </div>
+
+  <div class="campo">
+    <div class="campo-header">
+      <span>Identificazione soggetto</span>
+      <span class="num">01</span>
+    </div>
+    <div class="campo-body">
+      <div class="opzioni" style="flex-direction:row; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+        <label class="opzione" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">seduto</span>
+        </label>
+        <label class="opzione" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">in piedi</span>
+        </label>
+        <label class="opzione" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">appoggiato in modo sospetto</span>
+        </label>
+      </div>
+      <div class="fila">
+        <div class="riga-input">
+          <div class="riga-label">Capelli</div>
+          <input type="text" placeholder="...............">
+        </div>
+        <div class="riga-input">
+          <div class="riga-label">Espressione</div>
+          <input type="text" placeholder="...............">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <div class="campo-header">
+      <span>Valutazione zaino / borsa / busta</span>
+      <span class="num">02</span>
+    </div>
+    <div class="campo-body">
+      <div style="font-size:9px; color:var(--grigio-scuro); font-style:italic; margin-bottom:10px;">campo obbligatorio — gli zaini nascondono sempre qualcosa</div>
+      <div class="opzioni" id="g02">
+        <label class="opzione" onclick="radioCheck(this,'g02')">
+          <input type="radio" name="q02">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">innocuo — contiene solo tristezza e un pranzo triste</span>
+        </label>
+        <label class="opzione" onclick="radioCheck(this,'g02')">
+          <input type="radio" name="q02">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">sospetto — troppo pieno per essere legale</span>
+        </label>
+        <label class="opzione" onclick="radioCheck(this,'g02')">
+          <input type="radio" name="q02">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">ALLERTA — si muove. <em>Abbiamo detto si muove.</em></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <div class="campo-header">
+      <span>Analisi dispositivo</span>
+      <span class="num">03</span>
+    </div>
+    <div class="campo-body">
+      <div class="opzioni" id="g03">
+        <label class="opzione" onclick="radioCheck(this,'g03')">
+          <input type="radio" name="q03">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">reel di gattini — <em>classico, nessuna minaccia</em></span>
+        </label>
+        <label class="opzione" onclick="radioCheck(this,'g03')">
+          <input type="radio" name="q03">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">messaggi che rilegge tre volte senza rispondere</span>
+        </label>
+        <label class="opzione" onclick="radioCheck(this,'g03')">
+          <input type="radio" name="q03">
+          <div class="checkbox-custom"></div>
+          <span class="opzione-testo">niente — lo schermo è spento. Il soggetto fissa il riflesso. <em>Agente, allontanati.</em></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <div class="campo-header">
+      <span>Destinazione probabile</span>
+      <span class="num">04</span>
+    </div>
+    <div class="campo-body">
+      <div class="riga-input">
+        <div class="riga-label">Ufficialmente va a</div>
+        <input type="text" placeholder="......................................">
+      </div>
+      <div class="riga-input">
+        <div class="riga-label">In realtà sta fuggendo da</div>
+        <input type="text" placeholder="......................................">
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <div class="campo-header">
+      <span>Valutazione finale di pericolosità</span>
+      <span class="num">05</span>
+    </div>
+    <div class="campo-body">
+      <div class="stelle" id="stelle">
+        <span class="stella" onclick="setStar(1)">★</span>
+        <span class="stella" onclick="setStar(2)">★</span>
+        <span class="stella" onclick="setStar(3)">★</span>
+        <span class="livello-label" id="star-label">— seleziona il livello</span>
+      </div>
+      <div style="margin-top:10px; font-size:10px; color:var(--grigio-scuro); font-style:italic; line-height:1.6;" id="star-desc"></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="footer-scheda">
+    Rapporto completato. Conserva questa scheda. Non mostrarla al soggetto. Grazie per il tuo servizio.
+  </div>
+
+</div>
+
+<div class="azioni">
+  <button class="btn btn-reset" onclick="resetScheda()">↺ Nuova missione</button>
+  <button class="btn btn-pdf" onclick="stampaPDF()">⬇ Salva rapporto</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // PWA service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+
+  function toggleCheck(label) {
+    setTimeout(() => {
+      const cb = label.querySelector('input[type="checkbox"]');
+      if (cb.checked) {
+        label.classList.add('selezionata');
+        label.querySelector('.checkbox-custom').textContent = '✓';
+      } else {
+        label.classList.remove('selezionata');
+        label.querySelector('.checkbox-custom').textContent = '';
+      }
+    }, 0);
+  }
+
+  function radioCheck(label, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.opzione').forEach(l => {
+      l.classList.remove('selezionata');
+      l.querySelector('.checkbox-custom').textContent = '';
+    });
+    setTimeout(() => {
+      label.classList.add('selezionata');
+      label.querySelector('.checkbox-custom').textContent = '✓';
+    }, 0);
+  }
+
+  const starLabels = ['', 'inoffensivo, probabilmente stanco', 'da tenere d\'occhio alla prossima fermata', 'Agente, sei sicuro di essere tu quello che osserva?'];
+  let stelleAttive = 0;
+
+  function setStar(n) {
+    stelleAttive = n;
+    document.querySelectorAll('.stella').forEach((s, i) => {
+      s.classList.toggle('attiva', i < n);
+    });
+    document.getElementById('star-label').textContent = '★'.repeat(n) + '☆'.repeat(3-n);
+    document.getElementById('star-desc').textContent = starLabels[n];
+  }
+
+  function resetScheda() {
+    if (!confirm('Nuova missione? Il rapporto corrente verrà cancellato.')) return;
+    document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+    document.querySelectorAll('.opzione').forEach(l => {
+      l.classList.remove('selezionata');
+      l.querySelector('.checkbox-custom').textContent = '';
+      const cb = l.querySelector('input');
+      if (cb) cb.checked = false;
+    });
+    stelleAttive = 0;
+    document.querySelectorAll('.stella').forEach(s => s.classList.remove('attiva'));
+    document.getElementById('star-label').textContent = '— seleziona il livello';
+    document.getElementById('star-desc').textContent = '';
+    mostraToast('NUOVA MISSIONE AVVIATA');
+  }
+
+  function stampaPDF() {
+    mostraToast('PREPARAZIONE RAPPORTO...');
+    setTimeout(() => window.print(), 400);
+  }
+
+  function mostraToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visibile');
+    setTimeout(() => t.classList.remove('visibile'), 2000);
+  }
+</script>
+</body>
+</html>
