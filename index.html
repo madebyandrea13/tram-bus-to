@@ -443,6 +443,8 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   // PWA service worker
   if ('serviceWorker' in navigator) {
@@ -502,9 +504,27 @@
     mostraToast('NUOVA MISSIONE AVVIATA');
   }
 
-  function stampaPDF() {
+  async function stampaPDF() {
     mostraToast('PREPARAZIONE RAPPORTO...');
-    setTimeout(() => window.print(), 400);
+    try {
+      const { jsPDF } = window.jspdf;
+      const scheda = document.querySelector('.scheda');
+      const canvas = await html2canvas(document.body, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#F8F8F8'
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pdfW = pdf.internal.pageSize.getWidth();
+      const pdfH = (canvas.height * pdfW) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+      pdf.save('tram-bus-to-rapporto.pdf');
+      mostraToast('RAPPORTO SALVATO');
+    } catch(e) {
+      mostraToast('ERRORE — riprova');
+      console.error(e);
+    }
   }
 
   function mostraToast(msg) {
