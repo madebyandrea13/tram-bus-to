@@ -375,16 +375,17 @@
       <span class="num">03</span>
     </div>
     <div class="campo-body">
+      <div style="font-size:9px; color:var(--grigio-scuro); font-style:italic; margin-bottom:10px;">osserva cosa fa con il cellulare</div>
       <div class="opzioni" id="g03">
         <label class="opzione" onclick="radioCheck(this,'g03')">
           <input type="radio" name="q03">
           <div class="checkbox-custom"></div>
-          <span class="opzione-testo">reel di gattini — <em>classico, nessuna minaccia</em></span>
+          <span class="opzione-testo">guarda reel di gattini — <em>classico, nessuna minaccia</em></span>
         </label>
         <label class="opzione" onclick="radioCheck(this,'g03')">
           <input type="radio" name="q03">
           <div class="checkbox-custom"></div>
-          <span class="opzione-testo">messaggi che rilegge tre volte senza rispondere</span>
+          <span class="opzione-testo">legge messaggi che rilegge tre volte senza rispondere</span>
         </label>
         <label class="opzione" onclick="radioCheck(this,'g03')">
           <input type="radio" name="q03">
@@ -512,7 +513,10 @@
       const canvas = await html2canvas(document.body, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#F8F8F8'
+        backgroundColor: '#F8F8F8',
+        windowHeight: document.body.scrollHeight,
+        height: document.body.scrollHeight,
+        y: 0
       });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
